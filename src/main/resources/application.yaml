@@ -1,16 +1,15 @@
 ktor:
-    development: true
     application:
         modules:
             - com.example.ApplicationKt.module
     deployment:
         port: 8080
 postgres:
-  url: "jdbc:postgresql://localhost:5432/ktor_notes_app"
-  user: postgres
-  password: chan2000
+  url: $DATABASE_URL
+  user: $DATABASE_USER
+  password: $DATABASE_PASSWORD
 jwt:
   issuer: "http://localhost"
   audience: "jwt-audience"
   realm: "ktor notes app"
-  secret: "secretKeyIsHere"
+  secret: $SECRET_KEY

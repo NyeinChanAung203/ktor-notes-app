@@ -11,13 +11,13 @@ import org.koin.dsl.module
 
 val appModule = module {
     single { getProperty<Application>("application") }
-    single <UserRepository>{ PostgresUserRepository() }
-    single <RefreshTokenRepository>{ PostgresRefreshTokenRepository() }
-    single <NoteRepository> { PostgresNoteRepository() }
+    single<UserRepository> { PostgresUserRepository() }
+    single<RefreshTokenRepository> { PostgresRefreshTokenRepository() }
+    single<NoteRepository> { PostgresNoteRepository() }
 
     single { JwtService(get()) }
-    single { AuthService(get(),get(),get()) }
+    single { AuthService(get(), get(), get()) }
     single { UserService(get()) }
-    single { NoteService(get(),get()) }
+    single { NoteService(get(), get()) }
 }
 

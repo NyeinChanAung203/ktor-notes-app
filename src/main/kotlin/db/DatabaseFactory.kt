@@ -1,5 +1,7 @@
 package com.example.db
 
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
@@ -20,15 +22,19 @@ object DatabaseFactory {
     private fun connectDatabase(
         application: Application
     ) {
-        val url = application.environment.config.property("postgres.url").getString()
-        val user = application.environment.config.property("postgres.user").getString()
-        val password = application.environment.config.property("postgres.password").getString()
+        val url = System.getenv("DATABASE_URL") ?: application.environment.config.property("postgres.url").getString()
+        val username = System.getenv("DATABASE_USERNAME") ?: application.environment.config.property("postgres.user").getString()
+        val password = System.getenv("DATABASE_PASSWORD") ?: application.environment.config.property("postgres.password").getString()
 
-        Database.connect(
-            url = url,
-            user = user,
-            password = password
-        )
+        val config = HikariConfig().apply {
+            jdbcUrl = url
+            this.username = username
+            this.password = password
+            maximumPoolSize = 10
+        }
+        val dataSource = HikariDataSource(config)
+        Database.connect(dataSource)
+
     }
 
     private fun createTables() {
@@ -42,5 +48,5 @@ object DatabaseFactory {
 
 }
 
-suspend fun <T> suspendTransaction(block:  suspend Transaction.() -> T): T =
+suspend fun <T> suspendTransaction(block: suspend Transaction.() -> T): T =
     newSuspendedTransaction(context = Dispatchers.IO, statement = block)
